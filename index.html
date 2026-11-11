@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="zh-CN"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="词卡">
+<link rel="manifest" href="./manifest.webmanifest"><link rel="apple-touch-icon" href="./icon-180.png"><link rel="icon" href="./icon-192.png"><link rel="stylesheet" href="./mobile.css">
+<title>词卡生成器</title>
+<style>
+*{box-sizing:border-box}body{margin:0;color:#161616;background:#f5f6f4;font-family:"Microsoft YaHei","PingFang SC",sans-serif;letter-spacing:0}
+main{display:grid;grid-template-columns:360px minmax(0,1fr);gap:28px;max-width:1200px;margin:auto;padding:24px}
+.controls{display:grid;gap:16px;padding:20px;background:white}.preview{display:grid;justify-items:center;align-content:start;gap:16px;padding:20px;min-width:0;position:sticky;top:12px}
+h1{font-size:22px;margin:0}p{margin:0}label{display:grid;gap:7px;font-size:14px;font-weight:600}input,textarea,select{min-width:0;width:100%;border:1px solid #ccc;border-radius:5px;padding:9px;font:inherit;background:white;color:#111}
+input:focus-visible,textarea:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid #b83030;outline-offset:2px}textarea{resize:vertical;line-height:1.6}#term{min-height:76px!important}.row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+button{border:0;border-radius:5px;padding:10px 14px;font:inherit;font-weight:600;background:#222;color:white;cursor:pointer}button.secondary{background:#e9ece9;color:#222}canvas{display:block;width:100%;max-width:580px;height:auto;background:white;box-shadow:0 2px 16px #0001}details{border-top:1px solid #ddd;padding-top:14px}summary{cursor:pointer;font-size:14px}details>.settings{display:grid;gap:14px;padding-top:14px}[hidden]{display:none!important}#layout-status{max-width:580px}#version{color:#888;font-size:12px}#update-app{font-size:13px;background:#e9ece9;color:#222}
+@media(max-width:900px){main{grid-template-columns:minmax(0,1fr)}.preview{position:static}.controls{min-width:0}}
+</style></head>
+<body><main><section class="controls" aria-label="词卡内容">
+<header><h1>词卡生成器</h1><p id="offline-status" role="status">正在准备离线文件</p></header>
+<label>词条<textarea id="term" maxlength="120" rows="2">聊天多动症</textarea></label>
+<div class="row"><label>田字格排数<select id="titleRows"><option value="1">一排</option><option value="2">两排</option><option value="3">三排</option></select></label><label>格子大小<input id="cellSize" type="number" min="64" max="140" step="2" value="110"></label></div>
+<div class="row three" id="row-controls"><label>第一排格数<input id="cells1" type="number" min="0" max="16" value="0"></label><label id="row2-label" hidden>第二排格数<input id="cells2" type="number" min="0" max="16" value="0"></label><label id="row3-label" hidden>第三排格数<input id="cells3" type="number" min="0" max="16" value="0"></label></div>
+<p id="title-status" role="status" style="font-size:12px;color:#666">0 = 自动格数</p>
+<label class="toggle"><input id="showPinyin" type="checkbox" checked>显示拼音</label>
+<label>拼音<input id="pinyin" value="liáo tiān duō dòng zhèng"></label>
+<label>田字格排间距<input id="rowGap" type="number" min="0" max="80" step="2" value="24"></label>
+<label>正文<textarea id="body" maxlength="5000" rows="8"></textarea></label>
+<div class="row"><label>图片比例<select id="ratio"><option value="auto">自动高度</option><option value="4:5" selected>4:5</option><option value="1:1">1:1</option><option value="3:4">3:4</option></select></label><label>正文字号<input id="bodySize" type="number" min="22" max="44" value="30"></label></div>
+<details><summary>排版微调</summary><div class="settings"><div class="row"><label>行距倍数<input id="lineHeight" type="number" min="1.3" max="2.8" step="0.05" value="2.6"></label><label>字间距<input id="tracking" type="number" min="0" max="6" step="0.5" value="1.5"></label></div>
+<div class="row"><label>左右边距<input id="margin" type="number" min="40" max="130" step="2" value="72"></label><label>正文宽度<input id="bodyWidth" type="number" min="420" max="760" step="10" value="510"></label></div>
+<div class="row"><label>上下留白<input id="padding" type="number" min="24" max="120" step="2" value="104"></label><label>标题正文间距<input id="sectionGap" type="number" min="30" max="160" step="2" value="86"></label></div><label>导出宽度<select id="resolution"><option value="864">864 px</option><option value="1080" selected>1080 px</option></select></label></div></details>
+<p id="draft-status" role="status"></p><div class="actions"><button id="preview-toggle" class="secondary">预览词卡</button><button id="download">保存图片</button><button id="reset" class="secondary">恢复示例</button></div>
+<button id="update-app" hidden>更新已就绪，刷新</button><span id="version">排版版 2.2</span>
+</section><section class="preview" aria-label="词卡预览"><button id="back-edit" class="secondary">返回编辑</button><div class="canvas-frame"><canvas id="card" width="1080" height="1350"></canvas></div><p id="layout-status" role="status"></p></section></main>
+<dialog id="export-dialog" aria-labelledby="export-title"><div class="export-header"><h2 id="export-title">保存词卡</h2><button id="close-export" class="secondary" aria-label="关闭">关闭</button></div><img id="export-image" alt="生成的词卡图片"><p id="export-status" role="status"></p><div class="export-actions"><button id="share-image">分享或存储图像</button><button id="download-image" class="secondary">下载 PNG</button></div></dialog>
+<script src="./layout.js"></script><script src="./app.js"></script><script src="./mobile.js"></script></body></html>

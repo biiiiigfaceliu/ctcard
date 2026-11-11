@@ -1,0 +1,49 @@
+/* Overrides the retained desktop layout without changing card artwork. */
+html { -webkit-text-size-adjust:100%; }
+body { background:#f5f6f4!important; }
+main { padding-bottom:36px!important; }
+.controls,.preview { box-shadow:none!important; border-color:#dedfdc!important; }
+input,textarea,select { font-size:16px!important; }
+textarea { min-height:230px!important; }
+button { min-height:46px; touch-action:manipulation; }
+button:disabled { opacity:.45; cursor:not-allowed; }
+#offline-status { color:#416454; font-size:12px; margin-top:6px; }
+#draft-status,#layout-status,#export-status { font-size:13px; line-height:1.6; margin:0; color:#666; }
+#layout-status { color:#a83232; }
+#back-edit { display:none; }
+.actions { display:grid!important; grid-template-columns:1fr 1fr; }
+#reset { grid-column:1/-1; background:transparent; color:#777; font-size:13px; min-height:36px; }
+#download,#share-image { background:#b83030; }
+dialog { border:1px solid #ddd; border-radius:8px; width:min(520px,calc(100% - 24px)); max-height:90dvh; padding:16px; overflow:auto; }
+dialog::backdrop { background:rgb(0 0 0/.4); }
+.export-header { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:12px; }
+.export-header h2 { font-size:18px; margin:0; }
+#export-image { display:block; width:100%; height:auto; -webkit-touch-callout:default; }
+#export-status { margin:12px 0; }
+.export-actions { display:flex; gap:10px; flex-wrap:wrap; padding-bottom:env(safe-area-inset-bottom); }
+.canvas-frame { width:100%; min-width:0; display:flex; justify-content:center; align-items:flex-start; }
+.toggle { display:flex; align-items:center; gap:8px; min-height:40px; }
+.toggle input { width:20px; height:20px; accent-color:#b83030; }
+#title-status.warning { color:#b83030!important; }
+input:disabled { background:#f3f3f3; color:#888; }
+@media(min-width:901px) {
+  html,body { height:100%; overflow:hidden; }
+  main { height:100vh; height:100dvh; padding:24px!important; align-items:stretch; }
+  .controls { min-height:0; overflow-y:auto; overscroll-behavior:contain; scrollbar-gutter:stable; align-content:start; }
+  .preview { position:static; min-height:0; overflow:hidden; grid-template-rows:minmax(0,1fr) auto auto; }
+  .canvas-frame { min-height:0; height:100%; }
+  .canvas-frame canvas { width:auto; height:auto; max-width:100%; max-height:100%; object-fit:contain; }
+}
+@media(max-width:900px) {
+  main { width:100%!important; padding:0 0 calc(18px + env(safe-area-inset-bottom))!important; gap:0!important; }
+  .controls,.preview { border:0!important; border-radius:0!important; }
+  .controls { padding:calc(20px + env(safe-area-inset-top)) 20px 14px!important; gap:16px!important; }
+  .controls h1 { font-size:22px; }
+  .preview { display:none!important; padding:16px!important; gap:16px; min-height:100dvh; align-content:start; }
+  body.preview-mode .controls { display:none!important; }
+  body.preview-mode .preview { display:grid!important; }
+  #back-edit { display:block; justify-self:start; }
+  canvas { max-width:540px; box-shadow:none!important; }
+  .actions { background:#fff; padding:12px 0 calc(8px + env(safe-area-inset-bottom)); }
+  body.preview-mode::after { content:none; }
+}
